@@ -99,7 +99,7 @@ class SendTweet(Action):
     def run(self, dispatcher, tracker, domain):
 
         article_url = tracker.get_slot("output")
-        tweet = 'Latest news update: ' + article_url + ' -- posted by Yuki #YukiAITweets'
+        tweet = 'Latest news update: ' + article_url + ' -- posted by Yuki, the AI #YukiAITweets'
         twitterEngine = TwitterEngine(
             tweet=tweet,
             TWITTER_CONSUMER_KEY=TWITTER_CONSUMER_KEY,
