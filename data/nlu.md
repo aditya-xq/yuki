@@ -70,6 +70,13 @@
 - any updates on [tensorflow](topic_news)
 - fetch latest news about [ELon Musk](topic_news)
 
+## intent:deleteTweet
+- delete the tweet
+- delete my tweet
+- remove the tweet you posted
+- remove the tweet
+- delete tweet
+
 ## intent:greet
 - hey
 - hello
@@ -89,6 +96,7 @@
 - [India](GPE:india)
 - Australia
 - [deep learning](topic_news)
+- [blockchain](topic_news)
 
 ## intent:thank_you
 - thanks!

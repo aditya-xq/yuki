@@ -3,7 +3,6 @@
 actions:
 - handle_out_of_scope
 - utter_confirm_if_service_is_correct
-- utter_deny_replay
 - utter_end
 - utter_hello
 - utter_reply_chitchat_general
@@ -11,7 +10,10 @@ actions:
 - utter_welcome
 - utter_default
 - utter_ask_to_tweet
+- utter_ask_to_confirm
+- utter_reply_to_deny
 - send_tweet
+- delete_latest_tweet
 entities:
 - GPE
 - topic_news
@@ -29,6 +31,7 @@ intents:
 - bye
 - chitchat_identity
 - chitchat_general
+- deleteTweet
 slots:
   GPE:
     type: text
@@ -74,3 +77,12 @@ templates:
     - payload: /deny
       title: Nope, not now
     text: Wanna tweet this on twitter?
+  utter_ask_to_confirm:
+  - buttons:
+    - payload: /affirm
+      title: Yeah!
+    - payload: /deny
+      title: Nope
+    text: Are you sure you want to proceed with this action?
+  utter_reply_to_deny:
+  - text: Alright, not performing this action.

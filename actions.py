@@ -1,4 +1,7 @@
-from apikeys import *
+import sys
+sys.path.append("C:/Users/adity/Desktop/confidential")
+
+from global_constants import *
 from rasa_sdk import ActionExecutionRejection
 from rasa_sdk import Tracker
 from rasa_sdk.events import SlotSet, FollowupAction
@@ -7,14 +10,11 @@ from rasa_sdk.forms import FormAction, REQUESTED_SLOT, Action
 from rasa.core.slots import Slot
 from typing import Dict, Text, Any, List, Union
 
+from NewsEngine import *
+from TwitterEngine import *
 import sqlite3
 import requests
-from pycountry_convert import country_name_to_country_alpha2
 import tweepy
-
-# %%
-import sys
-sys.path.append("C:/Users/adity/Desktop/confidential")
 
 # %%
 conn = sqlite3.connect('master.db')  # Connecting to our db file
@@ -23,7 +23,7 @@ conn = sqlite3.connect('master.db')  # Connecting to our db file
 # Get news form action
 
 
-class getNews(FormAction):
+class GetNews(FormAction):
     def name(self):
         return "get_news"
 
@@ -34,7 +34,7 @@ class getNews(FormAction):
         return ["topic_news"]  # add GPE later
 
     def slot_mappings(self):
-        return {  # "GPE": [self.from_text(intent=[None]), self.from_entity(entity="GPE", intent = ["inform"])],
+        return {
             "topic_news": [
                 self.from_text(intent=[None, "getNews", "inform"]),
                 self.from_entity(entity="topic_news", intent=["getNews"])
@@ -52,16 +52,10 @@ class getNews(FormAction):
             slot_values.update(
                 self.extract_requested_slot(dispatcher, tracker, domain))
             if not slot_values:
-                # reject form action execution
-                # if some slot was requested but nothing was extracted
-                # it will allow other policies to predict another action
                 raise ActionExecutionRejection(
                     self.name(), "Failed to validate slot {0} "
                     "with action {1}"
                     "".format(slot_to_fill, self.name()))
-
-        # we'll check when validation failed in order
-        # to add appropriate utterances
 
         # validation succeed, set the slots values to the extracted values
         return [SlotSet(slot, value) for slot, value in slot_values.items()]
@@ -72,15 +66,11 @@ class getNews(FormAction):
             after all required slots are filled"""
 
         topic_news = tracker.get_slot("topic_news")
-        pageSize = '1'
-        url = "https://newsapi.org/v2/everything?q=" + topic_news + \
-            "&apiKey=" + NEWS_API_KEY + "&pageSize=" + pageSize
-
-        r = requests.get(url=url)
-        data = r.json()  # extracting data in json format
-        data = data['articles']
-
         dispatcher.utter_message("Here is some news I found!")
+        newsEngine = NewsEngine(topic=topic_news,
+                                pageSize=1,
+                                NEWS_API_KEY=NEWS_API_KEY)
+        data = newsEngine.fetchNews()
 
         for i in range(len(data)):
             output = data[i]['title'] + "\n" + data[i]['url'] + "\n"
@@ -102,24 +92,43 @@ class getNews(FormAction):
 # Action to tweet
 
 
-class sendTweet(Action):
+class SendTweet(Action):
     def name(self):
         return "send_tweet"
 
     def run(self, dispatcher, tracker, domain):
-        auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY,
-                                   TWITTER_CONSUMER_SECRET)
-        auth.set_access_token(TWITTER_ACCESS_TOKEN,
-                              TWITTER_ACCESS_TOKEN_SECRET)
-        api = tweepy.API(auth)
 
         article_url = tracker.get_slot("output")
-        topic_name = tracker.get_slot("topic_news_temp")
-        tweet = 'latest news update on ' + topic_name + ': ' + article_url + ' --posted by Yuki'
+        tweet = 'Latest news update: ' + article_url + ' -- posted by Yuki #YukiAITweets'
+        twitterEngine = TwitterEngine(
+            tweet=tweet,
+            TWITTER_CONSUMER_KEY=TWITTER_CONSUMER_KEY,
+            TWITTER_CONSUMER_SECRET=TWITTER_CONSUMER_SECRET,
+            TWITTER_ACCESS_TOKEN=TWITTER_ACCESS_TOKEN,
+            TWITTER_ACCESS_TOKEN_SECRET=TWITTER_ACCESS_TOKEN_SECRET)
 
-        api.update_status(status=tweet)
+        twitterEngine.doTweet()
         dispatcher.utter_message(
             'Hooray! the tweet has been successfully posted')
+
+        return []
+
+
+#################################################################################################################################
+
+
+class DeleteLatestTweet(Action):
+    def name(self):
+        return "delete_latest_tweet"
+
+    def run(self, dispatcher, tracker, domain):
+        twitterEngine = TwitterEngine(
+            tweet=None,
+            TWITTER_CONSUMER_KEY=TWITTER_CONSUMER_KEY,
+            TWITTER_CONSUMER_SECRET=TWITTER_CONSUMER_SECRET,
+            TWITTER_ACCESS_TOKEN=TWITTER_ACCESS_TOKEN,
+            TWITTER_ACCESS_TOKEN_SECRET=TWITTER_ACCESS_TOKEN_SECRET)
+        twitterEngine.deleteLatestTweet()
 
         return []
 
