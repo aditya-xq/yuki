@@ -17,7 +17,7 @@ import requests
 import tweepy
 
 # %%
-conn = sqlite3.connect('master.db')  # Connecting to our db file
+# conn = sqlite3.connect('master.db')  # Connecting to our db file
 # %%
 
 # Get news form action
