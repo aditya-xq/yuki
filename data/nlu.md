@@ -7,6 +7,8 @@
 - alright
 - true
 - True
+- yeah
+- /affirm
 
 ## intent:bye
 - bye
@@ -32,6 +34,14 @@
 - why do you exist?
 - why are you yuki?
 
+## intent:deleteTweet
+- delete the tweet
+- delete my tweet
+- remove the tweet you posted
+- remove the tweet
+- delete tweet
+- delete the tweet
+
 ## intent:deny
 - no
 - never
@@ -43,6 +53,8 @@
 - not this
 - False
 - False
+- nope
+- no!
 
 ## intent:getNews
 - Send me latest news updates
@@ -69,13 +81,9 @@
 - latest updates about [Taylor Swift](topic_news)
 - any updates on [tensorflow](topic_news)
 - fetch latest news about [ELon Musk](topic_news)
-
-## intent:deleteTweet
-- delete the tweet
-- delete my tweet
-- remove the tweet you posted
-- remove the tweet
-- delete tweet
+- read news
+- get news on [Astronomy](topic_news)
+- looking for news
 
 ## intent:greet
 - hey
@@ -91,12 +99,16 @@
 - hey
 - hi
 - ho
+- hi
+- hi
 
 ## intent:inform
 - [India](GPE:india)
 - Australia
 - [deep learning](topic_news)
 - [blockchain](topic_news)
+- [Robotics](topic_news)
+- [ISRO](topic_news)
 
 ## intent:thank_you
 - thanks!

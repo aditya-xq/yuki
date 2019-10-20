@@ -1,45 +1,45 @@
 %YAML 1.1
 ---
 actions:
+- delete_latest_tweet
 - handle_out_of_scope
+- send_tweet
+- utter_ask_to_confirm
+- utter_ask_to_tweet
 - utter_confirm_if_service_is_correct
+- utter_default
 - utter_end
 - utter_hello
 - utter_reply_chitchat_general
 - utter_reply_chitchat_identity
-- utter_welcome
-- utter_default
-- utter_ask_to_tweet
-- utter_ask_to_confirm
 - utter_reply_to_deny
-- send_tweet
-- delete_latest_tweet
+- utter_welcome
 entities:
 - GPE
 - topic_news
 forms:
 - get_news
 intents:
-- inform
+- deny
 - getNews
+- greet
+- inform
+- deleteTweet
+- affirm
 - choose
 - thank_you
-- greet
-- deny
 - take_quiz
-- affirm
 - bye
 - chitchat_identity
 - chitchat_general
-- deleteTweet
 slots:
   GPE:
+    type: text
+  output:
     type: text
   requested_slot:
     type: unfeaturized
   topic_news:
-    type: text
-  output:
     type: text
   topic_news_temp:
     type: text
@@ -47,10 +47,27 @@ templates:
   utter_ask_GPE:
   - text: Latest happenings in and around which country would you like to know? Btw,
       I'm not yet good with abbreviations. So, do enter the full name!
+  utter_ask_to_confirm:
+  - buttons:
+    - payload: /affirm
+      title: Yeah!
+    - payload: /deny
+      title: Nope
+    text: Are you sure you want to proceed with this action?
+  utter_ask_to_tweet:
+  - buttons:
+    - payload: /affirm
+      title: Yeah!
+    - payload: /deny
+      title: Nope, not now
+    text: Wanna tweet this on twitter?
   utter_ask_topic_news:
-  - text: Give me a topic/keyword on which you would like to know the latest updates in.
+  - text: Give me a topic/keyword on which you would like to know the latest updates
+      in.
   utter_confirm_if_service_is_correct:
   - text: I hope you found what you were looking for!
+  utter_default:
+  - text: Sorry, I did not understand you, please try input something else.
   utter_end:
   - text: Bye bye
   - text: until next time...
@@ -66,23 +83,7 @@ templates:
   - text: I know about me as much as you do!
   - text: You should ask my creator, XQ for more details
   - text: I am not really sure what to tell
-  utter_welcome:
-  - text: You're welcome!
-  utter_default:
-  - text: Sorry, I did not understand you, please try input something else.
-  utter_ask_to_tweet:
-  - buttons:
-    - payload: /affirm
-      title: Yeah!
-    - payload: /deny
-      title: Nope, not now
-    text: Wanna tweet this on twitter?
-  utter_ask_to_confirm:
-  - buttons:
-    - payload: /affirm
-      title: Yeah!
-    - payload: /deny
-      title: Nope
-    text: Are you sure you want to proceed with this action?
   utter_reply_to_deny:
   - text: Alright, not performing this action.
+  utter_welcome:
+  - text: You're welcome!

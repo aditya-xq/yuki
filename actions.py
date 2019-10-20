@@ -73,7 +73,7 @@ class GetNews(FormAction):
         data = newsEngine.fetchNews()
 
         for i in range(len(data)):
-            output = data[i]['title'] + "\n" + data[i]['url'] + "\n"
+            output = data[i]['title'] + "\n" + data[i]['url'] + "\n "
             dispatcher.utter_message(output)
 
         dispatcher.utter_template("utter_confirm_if_service_is_correct",
@@ -129,6 +129,8 @@ class DeleteLatestTweet(Action):
             TWITTER_ACCESS_TOKEN=TWITTER_ACCESS_TOKEN,
             TWITTER_ACCESS_TOKEN_SECRET=TWITTER_ACCESS_TOKEN_SECRET)
         twitterEngine.deleteLatestTweet()
+
+        dispatcher.utter_message('Your latest tweet has been deleted')
 
         return []
 
