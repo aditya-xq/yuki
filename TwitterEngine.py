@@ -2,9 +2,8 @@ import tweepy
 
 
 class TwitterEngine:
-    def __init__(self, tweet, TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET,
+    def __init__(self, TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET,
                  TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET):
-        self.tweet = tweet
         self.TWITTER_CONSUMER_KEY = TWITTER_CONSUMER_KEY
         self.TWITTER_CONSUMER_SECRET = TWITTER_CONSUMER_SECRET
         self.TWITTER_ACCESS_TOKEN = TWITTER_ACCESS_TOKEN
@@ -16,8 +15,8 @@ class TwitterEngine:
                                    TWITTER_ACCESS_TOKEN_SECRET)
         self.api = tweepy.API(self.auth)
 
-    def doTweet(self):
-        self.api.update_status(status=self.tweet)
+    def doTweet(self, tweet):
+        self.api.update_status(status=tweet)
         return []
 
     def deleteLatestTweet(self):

@@ -1,7 +1,3 @@
-import sys
-sys.path.append("C:/Users/adity/Desktop/confidential")
-
-from global_constants import *
 from rasa_sdk import ActionExecutionRejection
 from rasa_sdk import Tracker
 from rasa_sdk.events import SlotSet, FollowupAction
@@ -9,12 +5,10 @@ from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormAction, REQUESTED_SLOT, Action
 from rasa.core.slots import Slot
 from typing import Dict, Text, Any, List, Union
+from Engines import *
 
-from NewsEngine import *
-from TwitterEngine import *
 import sqlite3
-import requests
-import tweepy
+import random
 
 # %%
 # conn = sqlite3.connect('master.db')  # Connecting to our db file
@@ -29,8 +23,6 @@ class GetNews(FormAction):
 
     @staticmethod
     def required_slots(tracker: Tracker) -> List[Text]:
-        """A list of required slots that the form has to fill"""
-
         return ["topic_news"]  # add GPE later
 
     def slot_mappings(self):
@@ -62,15 +54,10 @@ class GetNews(FormAction):
 
     def submit(self, dispatcher: CollectingDispatcher, tracker: Tracker,
                domain: Dict[Text, Any]) -> List[Dict]:
-        """Define what the form has to do
-            after all required slots are filled"""
 
         topic_news = tracker.get_slot("topic_news")
         dispatcher.utter_message("Here is some news I found!")
-        newsEngine = NewsEngine(topic=topic_news,
-                                pageSize=1,
-                                NEWS_API_KEY=NEWS_API_KEY)
-        data = newsEngine.fetchNews()
+        data = newsEngine.fetchNews(topic_news)
 
         for i in range(len(data)):
             output = data[i]['title'] + "\n" + data[i]['url'] + "\n "
@@ -98,20 +85,17 @@ class SendTweet(Action):
 
     def run(self, dispatcher, tracker, domain):
 
-        article_url = tracker.get_slot("output")
-        tweet = 'Latest news update: ' + article_url + ' -- posted by Yuki, the AI #YukiAITweets'
-        twitterEngine = TwitterEngine(
-            tweet=tweet,
-            TWITTER_CONSUMER_KEY=TWITTER_CONSUMER_KEY,
-            TWITTER_CONSUMER_SECRET=TWITTER_CONSUMER_SECRET,
-            TWITTER_ACCESS_TOKEN=TWITTER_ACCESS_TOKEN,
-            TWITTER_ACCESS_TOKEN_SECRET=TWITTER_ACCESS_TOKEN_SECRET)
+        output = tracker.get_slot("output")
+        tweet = 'Latest news update: ' + output + ' -- posted by Yuki, the AI #YukiAITweets'
 
-        twitterEngine.doTweet()
+        twitterEngine.doTweet(tweet)
         dispatcher.utter_message(
-            'Hooray! the tweet has been successfully posted')
+            random.choice([
+                'Hooray! the tweet has been successfully posted',
+                'Posted the tweet!', 'Hai! tweet sucessfully posted'
+            ]))
 
-        return []
+        return [SlotSet("output", None)]
 
 
 #################################################################################################################################
@@ -122,16 +106,10 @@ class DeleteLatestTweet(Action):
         return "delete_latest_tweet"
 
     def run(self, dispatcher, tracker, domain):
-        twitterEngine = TwitterEngine(
-            tweet=None,
-            TWITTER_CONSUMER_KEY=TWITTER_CONSUMER_KEY,
-            TWITTER_CONSUMER_SECRET=TWITTER_CONSUMER_SECRET,
-            TWITTER_ACCESS_TOKEN=TWITTER_ACCESS_TOKEN,
-            TWITTER_ACCESS_TOKEN_SECRET=TWITTER_ACCESS_TOKEN_SECRET)
         twitterEngine.deleteLatestTweet()
-
-        dispatcher.utter_message('Your latest tweet has been deleted')
-
+        dispatcher.utter_message(
+            random.choice['Your latest tweet has been deleted',
+                          'Deleted your tweet! Careful next time.'])
         return []
 
 
