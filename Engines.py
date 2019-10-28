@@ -4,7 +4,7 @@ sys.path.append("C:/Users/adity/Desktop/confidential")
 from global_constants import *
 
 from NewsEngine import *
-from TwitterEngine import *
+from SocialEngine import *
 
 twitterEngine = TwitterEngine(
     TWITTER_CONSUMER_KEY=TWITTER_CONSUMER_KEY,
